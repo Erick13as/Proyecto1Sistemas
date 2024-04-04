@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <time.h>
 
 #define MAX_FILES 100
 #define MAX_PROCESSES 5
@@ -28,6 +29,20 @@ void copyFile(const char *source, const char *destination) {
     fclose(destinationFile);
 }
 
+void writeToLogfile(const char *filename, int processId, double duration) {
+    FILE *logfile = fopen("logfile.csv", "a");
+    if (logfile == NULL) {
+        perror("Error al abrir el archivo de bitácora");
+        exit(EXIT_FAILURE);
+    }
+
+    time_t now = time(NULL);
+    struct tm *localTime = localtime(&now);
+    fprintf(logfile, "%s,%d,%.2f\n", filename, processId, duration);
+
+    fclose(logfile);
+}
+
 void processDirectory(const char *dirPath, const char *destination) {
     DIR *dir = opendir(dirPath);
     struct dirent *entry;
@@ -43,8 +58,14 @@ void processDirectory(const char *dirPath, const char *destination) {
             snprintf(sourcePath, sizeof(sourcePath), "%s/%s", dirPath, entry->d_name);
             char destinationPath[512];
             snprintf(destinationPath, sizeof(destinationPath), "%s/%s", destination, entry->d_name);
+
+            clock_t startTime = clock();
             copyFile(sourcePath, destinationPath);
+            clock_t endTime = clock();
+            double duration = (double)(endTime - startTime) / CLOCKS_PER_SEC;
+
             printf("Archivo copiado: %s\n", entry->d_name);
+            writeToLogfile(entry->d_name, getpid(), duration);
         } else if (entry->d_type == DT_DIR && strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) { // Si es un directorio
             char subdirPath[512];
             snprintf(subdirPath, sizeof(subdirPath), "%s/%s", dirPath, entry->d_name);
@@ -64,18 +85,17 @@ int main(int argc, char *argv[]) {
     const char *sourceDir = argv[1];
     const char *destinationDir = argv[2];
 
-    // Crear pool de procesos
-    pid_t processes[MAX_PROCESSES];
-    int processCount = 0;
+    // Crear archivo de bitácora (logfile)
+    FILE *logfile = fopen("logfile.csv", "w");
+    if (logfile == NULL) {
+        perror("Error al crear el archivo de bitácora");
+        exit(EXIT_FAILURE);
+    }
+    fprintf(logfile, "Filename,Process ID,Duration\n");
+    fclose(logfile);
 
     // Procesar directorio y subdirectorios
     processDirectory(sourceDir, destinationDir);
-
-    // Esperar a que todos los procesos hijos terminen
-    int i;
-    for (i = 0; i < processCount; i++) {
-        wait(NULL);
-    }
 
     printf("Copia de archivos completa.\n");
 
