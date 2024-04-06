@@ -77,7 +77,6 @@ void copyDirectory(const char *source, const char *destination) {
                 copyDirectory(sourcePath, destinationPath);
                 clock_t endTime = clock();
                 double duration = (double)(endTime - startTime) / CLOCKS_PER_SEC;
-                writeToLogfile(entry->d_name, source, getpid(), duration);
             } else {
                 clock_t startTime = clock();
                 copyFile(sourcePath, destinationPath);
