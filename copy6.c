@@ -73,13 +73,18 @@ void copyDirectory(const char *source, const char *destination) {
 
             if (S_ISDIR(st.st_mode)) {
                 mkdir(destinationPath, 0777);
+                clock_t startTime = clock();
                 copyDirectory(sourcePath, destinationPath);
+                clock_t endTime = clock();
+                double duration = (double)(endTime - startTime) / CLOCKS_PER_SEC;
+                writeToLogfile(entry->d_name, source, getpid(), duration);
             } else {
+                clock_t startTime = clock();
                 copyFile(sourcePath, destinationPath);
+                clock_t endTime = clock();
+                double duration = (double)(endTime - startTime) / CLOCKS_PER_SEC;
+                writeToLogfile(entry->d_name, source, getpid(), duration);
             }
-
-            // Registrar en el logfile
-            writeToLogfile(entry->d_name, source, getpid(), 0.0);
         }
     }
     closedir(dir);
