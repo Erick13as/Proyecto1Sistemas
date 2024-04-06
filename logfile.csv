@@ -1,10 +1,10 @@
 Filename,Process ID,Duration
-Carpeta,637395,0.00
-..,637396,0.00
-Jorge.mp4,637397,0.29
-.,637397,0.00
-Alicia.mp4,637395,0.52
-Alicia3.mp4,637396,0.74
-Jorge3.mp4,637398,1.33
-Jorge4.mp4,637394,1.67
-Jorge2.mp4,637397,2.18
+prueba/Jorge.mp4,860809,0.27
+prueba/Jorge3.mp4,860810,1.03
+prueba/Alicia.mp4,860812,0.53
+prueba/Alicia3.mp4,860811,0.71
+prueba/Jorge2.mp4,860809,1.82
+prueba/Carpeta/Carpeta2/Jorge4.mp4,860808,0.00
+prueba/Carpeta/Carpeta2,860808,0.00
+prueba/Carpeta/Jorge6.mp4,860808,0.00
+prueba/Carpeta/Alicia2.mp4,860808,0.00
