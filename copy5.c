@@ -47,7 +47,7 @@ void copyFile(const char *source, const char *destination) {
     fclose(destinationFile);
 }
 
-void copyDirectory(const char *sourceDir, const char *destinationDir) {
+void copyDirectoryRecursively(const char *sourceDir, const char *destinationDir) {
     DIR *dir = opendir(sourceDir);
     struct dirent *entry;
 
@@ -64,11 +64,28 @@ void copyDirectory(const char *sourceDir, const char *destinationDir) {
             char destinationPath[512];
             snprintf(destinationPath, sizeof(destinationPath), "%s/%s", destinationDir, entry->d_name);
 
-            copyFile(sourcePath, destinationPath);
+            struct stat statbuf;
+            if (stat(sourcePath, &statbuf) == -1) {
+                perror("stat");
+                exit(EXIT_FAILURE);
+            }
+
+            if (S_ISDIR(statbuf.st_mode)) {
+                // Si es un subdirectorio, copiar recursivamente
+                copyDirectoryRecursively(sourcePath, destinationPath);
+            } else {
+                // Si es un archivo regular, simplemente copiarlo
+                copyFile(sourcePath, destinationPath);
+            }
         }
     }
 
     closedir(dir);
+}
+
+void copyDirectory(const char *sourceDir, const char *destinationDir) {
+    mkdir(destinationDir, 0777); // Crear directorio en el destino
+    copyDirectoryRecursively(sourceDir, destinationDir);
 }
 
 void writeToLogfile(const char *filename, int processId, double duration) {
