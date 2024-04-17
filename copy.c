@@ -75,20 +75,14 @@ void copyDirectory(const char *source, const char *destination) {
                 mkdir(destinationPath, 0777);
                 struct timespec startTime;
                 clock_gettime(CLOCK_MONOTONIC, &startTime);
-                //clock_t startTime = clock();
                 copyDirectory(sourcePath, destinationPath);
-                //clock_t endTime = clock();
-                //double duration = (double)(endTime - startTime) / CLOCKS_PER_SEC;
                 struct timespec endTime;
                 clock_gettime(CLOCK_MONOTONIC, &endTime);
                 double duration = (endTime.tv_sec - startTime.tv_sec) + (endTime.tv_nsec - startTime.tv_nsec) / 1e9;
             } else {
                 struct timespec startTime;
                 clock_gettime(CLOCK_MONOTONIC, &startTime);
-                //clock_t startTime = clock();
                 copyFile(sourcePath, destinationPath);
-                //clock_t endTime = clock();
-                //double duration = (double)(endTime - startTime) / CLOCKS_PER_SEC;
                 struct timespec endTime;
                 clock_gettime(CLOCK_MONOTONIC, &endTime);
                 double duration = (endTime.tv_sec - startTime.tv_sec) + (endTime.tv_nsec - startTime.tv_nsec) / 1e9;
@@ -108,7 +102,6 @@ int main(int argc, char *argv[]) {
     const char *sourceDir = argv[1];
     const char *destinationDir = argv[2];
 
-    // Registro del tiempo de inicio del programa
     struct timespec programStartTime;
     clock_gettime(CLOCK_MONOTONIC, &programStartTime);
 
@@ -163,10 +156,7 @@ int main(int argc, char *argv[]) {
                 } else {
                     struct timespec startTime;
                     clock_gettime(CLOCK_MONOTONIC, &startTime);
-                    //clock_t startTime = clock();
                     copyFile(sourcePath, destinationPath);
-                    //clock_t endTime = clock();
-                    //double duration = (double)(endTime - startTime) / CLOCKS_PER_SEC;
                     struct timespec endTime;
                     clock_gettime(CLOCK_MONOTONIC, &endTime);
                     double duration = (endTime.tv_sec - startTime.tv_sec) + (endTime.tv_nsec - startTime.tv_nsec) / 1e9;
@@ -231,13 +221,11 @@ int main(int argc, char *argv[]) {
 
     closedir(dir);
 
-    // Registro del tiempo de finalización del programa
     struct timespec programEndTime;
     clock_gettime(CLOCK_MONOTONIC, &programEndTime);
 
     double programDuration = (programEndTime.tv_sec - programStartTime.tv_sec) + (programEndTime.tv_nsec - programStartTime.tv_nsec) / 1e9;
 
-    // Agregar el tiempo total al final del archivo de registro
     logfile = fopen("logfile.csv", "a");
     if (logfile == NULL) {
         perror("Error al abrir el archivo de bitácora");
